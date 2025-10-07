@@ -23,8 +23,8 @@ jobs:
     - name: Build Docker image
       run: |
         IMAGE_NAME=ghcr.io/${{ github.repository }}
-        IMAGE_NAME=${IMAGE_NAME,,}   # convert to lowercase
-        docker build -t $IMAGE_NAME:latest ./nextjs-devops-assessment
+        IMAGE_NAME=${IMAGE_NAME,,}   # lowercase
+        docker build -t $IMAGE_NAME:latest .
         SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
         docker tag $IMAGE_NAME:latest $IMAGE_NAME:$SHORT_SHA
         docker tag $IMAGE_NAME:latest $IMAGE_NAME:$GITHUB_SHA

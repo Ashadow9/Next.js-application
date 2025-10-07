@@ -23,6 +23,7 @@ jobs:
     - name: Build Docker image
       run: |
         IMAGE_NAME=ghcr.io/${{ github.repository }}
+        IMAGE_NAME=${IMAGE_NAME,,}   # convert to lowercase
         docker build -t $IMAGE_NAME:latest .
         SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
         docker tag $IMAGE_NAME:latest $IMAGE_NAME:$SHORT_SHA
@@ -31,6 +32,7 @@ jobs:
     - name: Push Docker image
       run: |
         IMAGE_NAME=ghcr.io/${{ github.repository }}
+        IMAGE_NAME=${IMAGE_NAME,,}   # convert to lowercase
         docker push $IMAGE_NAME:latest
         SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
         docker push $IMAGE_NAME:$SHORT_SHA

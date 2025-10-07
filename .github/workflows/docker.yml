@@ -1,5 +1,10 @@
 name: Docker Build & Push
 
+# Give workflow permissions to push packages
+permissions:
+  packages: write
+  contents: read
+
 on:
   push:
     branches:
@@ -10,26 +15,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout repo
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Log in to GitHub Container Registry
+    # Step 2: Log in to GitHub Container Registry
+    - name: Log in to GHCR
       uses: docker/login-action@v2
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    # Step 3: Build Docker image
     - name: Build Docker image
       run: |
         IMAGE_NAME=ghcr.io/${{ github.repository }}
-        IMAGE_NAME=${IMAGE_NAME,,}   # lowercase
+        IMAGE_NAME=${IMAGE_NAME,,}   # convert to lowercase
         docker build -t $IMAGE_NAME:latest .
         SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
         docker tag $IMAGE_NAME:latest $IMAGE_NAME:$SHORT_SHA
         docker tag $IMAGE_NAME:latest $IMAGE_NAME:$GITHUB_SHA
 
-    - name: Push Docker image
+    # Step 4: Push Docker image
+    - name: Push Docker image to GHCR
       run: |
         IMAGE_NAME=ghcr.io/${{ github.repository }}
         IMAGE_NAME=${IMAGE_NAME,,}   # convert to lowercase
